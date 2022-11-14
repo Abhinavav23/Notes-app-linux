@@ -1,22 +1,46 @@
 const addNoteButton = document.getElementById('add-notes');
 const inputTitle = document.getElementById('title');
+const inputDate = document.getElementById('due-date');
+const inputUrgency = document.getElementById('urgency');
 const yourNotesSection = document.getElementById('your-notes');
-
 
 // addNoteButton.onclick;
 
+const getItemFromSessionStorage = () => {
+    let notes = sessionStorage.getItem('notes');
+    // ["note", "note"] or null
+    if(notes){
+        notes = JSON.parse(notes);
+    }
+    return notes;
+}
+
+const addNotesOnPageLoad = () => {
+    // step - 1 get the data
+    let notesData = getItemFromSessionStorage()
+    if(notesData){
+        notesData.forEach(notes => {
+            addNote(notes.title, notes.date, notes.importance);
+        });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', addNotesOnPageLoad)
+
 const storeNotes = () => {
     // check in the session storage if notes array is present
-    let notes = sessionStorage.getItem('notes');
-    console.log('notes', notes);
-
+    let notes = getItemFromSessionStorage();
+    let notesObj = {
+        title: inputTitle.value,
+        date: inputDate.value,
+        importance: inputUrgency.value
+    }
     if(notes){
-        const parsedNotes = JSON.parse(notes);
-        parsedNotes.push(inputTitle.value);
-        sessionStorage.setItem('notes', JSON.stringify(parsedNotes));
+        notes.push(notesObj);
+        sessionStorage.setItem('notes', JSON.stringify(notes));
     } else{
         let newNotes = [];
-        newNotes.push(inputTitle.value)
+        newNotes.push(notesObj);
         sessionStorage.setItem('notes', JSON.stringify(newNotes));
     }
 }
@@ -36,29 +60,41 @@ const createDeleteButtonWithListener = () => {
     return deleteNoteButton
 }
 
-const addNote = () => {
-    // step 1. get the value entered by user ---> inputTitle.value
-    
-    // step 2. create a html tag using which you will display the notes
-        const notesWrapper = document.createElement('div');
-        const newNoteTitleTag =  document.createElement('p'); // <p></p>
-        newNoteTitleTag.innerText = inputTitle.value;
+const createParagraphElementAndAddValue = (value) => {
+     const newNoteTitleTag =  document.createElement('p'); // <p></p>
+     newNoteTitleTag.innerText = value;
+     return newNoteTitleTag;
+}
 
+const addNote = (title, date, urgency) => {
+        // creating a wrapper
+        const notesWrapper = document.createElement('div');
+        notesWrapper.className = 'wrapper';
+        // console.log(notesWrapper);
+        // create title element
+       
+        // add value in title element
+        let titleTag = createParagraphElementAndAddValue(title);
+        let dateTag = createParagraphElementAndAddValue(date);
+        let importanceTag  = createParagraphElementAndAddValue(urgency);
         // get delete button
         const deleteButton = createDeleteButtonWithListener();
        
-    // step 3. add the value that user entered into the newly created tag
-    
-    // append notes in the wrapper div
-        notesWrapper.appendChild(newNoteTitleTag);
-    // append delete button in the wrapper div
+        // append notes in the wrapper div
+        notesWrapper.appendChild(titleTag);
+        // notesWrapper.appendChild(dateTag);
+        // notesWrapper.appendChild(importanceTag);
+        // append delete button in the wrapper div
         notesWrapper.appendChild(deleteButton);
-    
+        // add wrapper in section
         yourNotesSection.appendChild(notesWrapper);
-    
-        storeNotes();
-        // console.log(yourNotes);
 }
 
-addNoteButton.addEventListener('click', addNote)
+addNoteButton.addEventListener('click', () => {
+    addNote(inputTitle.value, inputDate.value, inputUrgency.value);
+    storeNotes();
+    console.log('inputTitle', inputTitle.value);
+    console.log('inputDate', inputDate.value);
+    console.log('inputUrgency', inputUrgency.value);
+})
 

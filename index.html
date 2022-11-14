@@ -9,9 +9,22 @@
 </head>
 <body>
     <h1>Notes App</h1>
-    <section id="create-notes">
+    <section id="create-notes" class="inputWrapper">
         <label for="title">Title</label>
         <input type="text" name="" id="title">
+
+        <label for="due-date">due date</label>
+        <input type="date" name="" id="due-date">
+
+        <label for="urgency">importance</label>
+        <select name="" id="urgency">
+            <option value="" selected disabled>choose one</option>
+            <option value="very urgent">very urgent</option>
+            <option value="urgent">urgent</option>
+            <option value="normal">normal</option>
+        </select>
+        <label for="description">Description</label>
+        <textarea name="" id="description" cols="30" rows="10"></textarea>
         <button id="add-notes">Add</button>
     </section>
 
@@ -21,6 +34,10 @@
             <!-- add notes here dynamically -->
         </section>
     </main>
+
+    <section id="notes-modal">
+
+    </section>
     <script src="./script.js"></script>
 </body>
 </html>
